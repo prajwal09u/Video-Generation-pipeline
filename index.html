@@ -1,0 +1,595 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Viral Clip Bay</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg: #131316;
+    --panel: #1c1d21;
+    --panel-2: #202126;
+    --border: #2c2d33;
+    --text: #f2f0ea;
+    --text-dim: #94939c;
+    --amber: #f2a93b;
+    --amber-dim: #7a5a26;
+    --red: #ff4b4b;
+    --teal: #4bd9c0;
+    --radius: 10px;
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', system-ui, sans-serif;
+  }
+
+  body {
+    min-height: 100vh;
+    padding-bottom: 80px;
+  }
+
+  .mono { font-family: 'IBM Plex Mono', monospace; }
+
+  a { color: var(--amber); }
+
+  /* ---------- Sprocket strip ---------- */
+  .sprocket-strip {
+    height: 22px;
+    background:
+      repeating-linear-gradient(
+        90deg,
+        var(--panel-2) 0px, var(--panel-2) 10px,
+        transparent 10px, transparent 26px
+      );
+    background-position: center;
+    position: relative;
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+  }
+  .sprocket-strip::before {
+    content: "";
+    position: absolute;
+    inset: 6px 0;
+    background: repeating-linear-gradient(
+      90deg,
+      var(--bg) 0px, var(--bg) 12px,
+      transparent 12px, transparent 28px
+    );
+  }
+
+  /* ---------- Hero ---------- */
+  .hero {
+    max-width: 980px;
+    margin: 0 auto;
+    padding: 48px 24px 40px;
+    text-align: center;
+  }
+  .eyebrow {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 0.18em;
+    color: var(--teal);
+    text-transform: uppercase;
+    margin-bottom: 14px;
+  }
+  h1 {
+    font-family: 'Archivo Black', sans-serif;
+    font-weight: 400;
+    font-size: clamp(34px, 6vw, 58px);
+    line-height: 1.02;
+    margin: 0 0 16px;
+    letter-spacing: -0.01em;
+  }
+  h1 span { color: var(--amber); }
+  .subhead {
+    color: var(--text-dim);
+    font-size: 17px;
+    max-width: 560px;
+    margin: 0 auto 36px;
+    line-height: 1.55;
+  }
+
+  /* Hero timeline graphic — signature element */
+  .reel {
+    max-width: 820px;
+    margin: 0 auto;
+  }
+  .reel-track {
+    position: relative;
+    height: 56px;
+    background: var(--panel-2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+  .reel-seg {
+    position: absolute;
+    top: 0; bottom: 0;
+    border-radius: 4px;
+    opacity: 0.85;
+  }
+  .reel-tc {
+    display: flex;
+    justify-content: space-between;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: var(--text-dim);
+    margin-top: 8px;
+    padding: 0 2px;
+  }
+
+  /* ---------- Panels ---------- */
+  main {
+    max-width: 780px;
+    margin: 0 auto;
+    padding: 0 24px;
+  }
+  .panel {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 26px 26px 28px;
+    margin-top: 22px;
+  }
+  .panel-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 18px;
+  }
+  .panel-label::before {
+    content: "";
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: var(--amber);
+  }
+
+  label { display: block; font-size: 13px; color: var(--text-dim); margin-bottom: 6px; }
+
+  input[type="url"], select {
+    width: 100%;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    color: var(--text);
+    border-radius: 8px;
+    padding: 12px 14px;
+    font-size: 15px;
+    font-family: inherit;
+  }
+  input[type="url"]:focus, select:focus, button:focus-visible, input[type="range"]:focus-visible {
+    outline: 2px solid var(--amber);
+    outline-offset: 2px;
+  }
+
+  .field { margin-bottom: 18px; }
+  .row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+
+  .range-row { display: flex; align-items: center; gap: 10px; }
+  .range-row input[type="range"] { flex: 1; accent-color: var(--amber); }
+  .range-val { width: 44px; text-align: right; font-family: 'IBM Plex Mono', monospace; font-size: 13px; color: var(--amber); }
+
+  .toggle-row { display: flex; gap: 22px; margin-bottom: 18px; flex-wrap: wrap; }
+  .toggle {
+    display: flex; align-items: center; gap: 9px;
+    font-size: 14px; color: var(--text);
+    cursor: pointer; user-select: none;
+  }
+  .switch {
+    width: 36px; height: 20px; border-radius: 20px;
+    background: var(--panel-2); border: 1px solid var(--border);
+    position: relative; flex-shrink: 0;
+    transition: background 0.15s;
+  }
+  .switch::after {
+    content: "";
+    position: absolute; top: 2px; left: 2px;
+    width: 14px; height: 14px; border-radius: 50%;
+    background: var(--text-dim);
+    transition: transform 0.15s, background 0.15s;
+  }
+  input[type="checkbox"] { display: none; }
+  input[type="checkbox"]:checked + .switch { background: var(--amber-dim); border-color: var(--amber); }
+  input[type="checkbox"]:checked + .switch::after { transform: translateX(16px); background: var(--amber); }
+
+  button.run {
+    width: 100%;
+    background: var(--amber);
+    color: #1a1305;
+    border: none;
+    border-radius: 8px;
+    padding: 14px;
+    font-size: 15px;
+    font-weight: 700;
+    font-family: 'IBM Plex Mono', monospace;
+    letter-spacing: 0.04em;
+    cursor: pointer;
+    text-transform: uppercase;
+    transition: filter 0.15s;
+  }
+  button.run:hover { filter: brightness(1.08); }
+  button.run:disabled { background: var(--panel-2); color: var(--text-dim); cursor: not-allowed; }
+
+  .hint { font-size: 12.5px; color: var(--text-dim); margin-top: 10px; line-height: 1.5; }
+
+  /* ---------- Status panel ---------- */
+  #status-panel { display: none; }
+  .stage-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 22px;
+  }
+  .stage {
+    display: flex; flex-direction: column; align-items: center; gap: 8px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10.5px; letter-spacing: 0.08em;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    flex: 1;
+    position: relative;
+  }
+  .stage-dot {
+    width: 11px; height: 11px; border-radius: 50%;
+    background: var(--panel-2);
+    border: 2px solid var(--border);
+  }
+  .stage.active .stage-dot { border-color: var(--amber); background: var(--amber); box-shadow: 0 0 0 4px rgba(242,169,59,0.15); }
+  .stage.done .stage-dot { border-color: var(--teal); background: var(--teal); }
+  .stage.active, .stage.done { color: var(--text); }
+
+  .scrub-track {
+    height: 10px;
+    background: var(--panel-2);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    overflow: hidden;
+    position: relative;
+  }
+  .scrub-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--amber), var(--teal));
+    width: 0%;
+    transition: width 0.4s ease;
+  }
+  .status-line {
+    display: flex; justify-content: space-between; align-items: baseline;
+    margin-top: 12px;
+  }
+  #status-message { font-size: 13.5px; color: var(--text-dim); }
+  #status-pct { font-family: 'IBM Plex Mono', monospace; color: var(--amber); font-size: 13.5px; }
+
+  /* ---------- Results ---------- */
+  #results-panel { display: none; }
+  .clip-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 18px;
+  }
+  .clip-card {
+    background: var(--panel-2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+  .clip-card video { width: 100%; display: block; background: #000; max-height: 360px; }
+  .clip-body { padding: 14px 16px 16px; display: flex; flex-direction: column; gap: 8px; flex: 1; }
+  .clip-title { font-weight: 700; font-size: 14.5px; }
+  .clip-meta { font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--teal); }
+  .clip-hook, .clip-reason { font-size: 12.5px; color: var(--text-dim); line-height: 1.5; }
+  .clip-reason { border-top: 1px dashed var(--border); padding-top: 8px; }
+  .dl-btn {
+    margin-top: 4px;
+    text-align: center;
+    padding: 9px;
+    background: transparent;
+    border: 1px solid var(--amber);
+    color: var(--amber);
+    border-radius: 6px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    text-decoration: none;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  .dl-btn:hover { background: var(--amber); color: #1a1305; }
+
+  /* ---------- Error ---------- */
+  #error-panel {
+    display: none;
+    border-color: var(--red);
+  }
+  #error-panel .panel-label::before { background: var(--red); }
+  #error-message { color: var(--text); font-size: 14px; line-height: 1.6; }
+
+  footer {
+    text-align: center;
+    color: var(--text-dim);
+    font-size: 12px;
+    margin-top: 36px;
+    font-family: 'IBM Plex Mono', monospace;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { transition: none !important; }
+  }
+
+  @media (max-width: 560px) {
+    .row { grid-template-columns: 1fr; }
+    .stage-row { display: none; } /* keep it simple on small screens */
+  }
+</style>
+</head>
+<body>
+
+  <div class="sprocket-strip"></div>
+  <div class="hero">
+    <div class="eyebrow">source → cut → caption → post</div>
+    <h1>VIRAL CLIP <span>BAY</span></h1>
+    <p class="subhead">Paste a YouTube link. Claude reads the transcript, marks the moments worth cutting, and ffmpeg does the splicing — three ready-to-post shorts, timestamped and captioned.</p>
+    <div class="reel">
+      <div class="reel-track" id="hero-reel" aria-hidden="true">
+        <div class="reel-seg" style="left:8%; width:14%; background:var(--amber);"></div>
+        <div class="reel-seg" style="left:38%; width:10%; background:var(--teal);"></div>
+        <div class="reel-seg" style="left:64%; width:18%; background:var(--red);"></div>
+      </div>
+      <div class="reel-tc"><span>00:00:00:00</span><span>SOURCE TIMELINE</span><span>00:12:00:00</span></div>
+    </div>
+  </div>
+  <div class="sprocket-strip"></div>
+
+  <main>
+    <!-- INGEST -->
+    <section class="panel" id="ingest-panel">
+      <div class="panel-label">Ingest</div>
+      <form id="job-form">
+        <div class="field">
+          <label for="url">YouTube URL</label>
+          <input type="url" id="url" name="url" placeholder="https://www.youtube.com/watch?v=…" required />
+        </div>
+
+        <div class="row">
+          <div class="field">
+            <label for="num_clips">Clips to produce</label>
+            <div class="range-row">
+              <input type="range" id="num_clips" min="1" max="6" value="3" />
+              <span class="range-val" id="num_clips_val">3</span>
+            </div>
+          </div>
+          <div class="field">
+            <label for="whisper_model">Transcription model</label>
+            <select id="whisper_model">
+              <option value="tiny">tiny — fastest</option>
+              <option value="base">base</option>
+              <option value="small" selected>small — balanced</option>
+              <option value="medium">medium</option>
+              <option value="large-v3">large-v3 — most accurate</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="field">
+            <label for="min_len">Min clip length (s)</label>
+            <div class="range-row">
+              <input type="range" id="min_len" min="5" max="120" value="20" />
+              <span class="range-val" id="min_len_val">20</span>
+            </div>
+          </div>
+          <div class="field">
+            <label for="max_len">Max clip length (s)</label>
+            <div class="range-row">
+              <input type="range" id="max_len" min="10" max="180" value="75" />
+              <span class="range-val" id="max_len_val">75</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="toggle-row">
+          <label class="toggle">
+            <input type="checkbox" id="vertical" checked />
+            <span class="switch"></span>
+            Crop to 9:16 vertical
+          </label>
+          <label class="toggle">
+            <input type="checkbox" id="captions" checked />
+            <span class="switch"></span>
+            Burn in captions
+          </label>
+        </div>
+
+        <button type="submit" class="run" id="run-btn">Roll clips ▶</button>
+        <p class="hint">Runs entirely on this machine — the video is downloaded and transcribed locally, only the transcript text is sent to Claude to pick the moments. Only use this on videos you own or have rights to re-cut.</p>
+      </form>
+    </section>
+
+    <!-- STATUS -->
+    <section class="panel" id="status-panel">
+      <div class="panel-label">Status</div>
+      <div class="stage-row" id="stage-row">
+        <div class="stage" data-stage="download"><div class="stage-dot"></div>Download</div>
+        <div class="stage" data-stage="transcribe"><div class="stage-dot"></div>Transcribe</div>
+        <div class="stage" data-stage="select"><div class="stage-dot"></div>Select</div>
+        <div class="stage" data-stage="cut"><div class="stage-dot"></div>Cut</div>
+      </div>
+      <div class="scrub-track"><div class="scrub-fill" id="scrub-fill"></div></div>
+      <div class="status-line">
+        <span id="status-message">Queued…</span>
+        <span id="status-pct" class="mono">0%</span>
+      </div>
+    </section>
+
+    <!-- ERROR -->
+    <section class="panel" id="error-panel">
+      <div class="panel-label">Something went wrong</div>
+      <div id="error-message"></div>
+    </section>
+
+    <!-- RESULTS -->
+    <section class="panel" id="results-panel">
+      <div class="panel-label">Contact sheet</div>
+      <div class="clip-grid" id="clip-grid"></div>
+    </section>
+
+    <footer>viral clip bay · runs locally · powered by claude + whisper + ffmpeg</footer>
+  </main>
+
+<script>
+  const STAGE_ORDER = ["download", "transcribe", "select", "cut"];
+
+  const form = document.getElementById("job-form");
+  const runBtn = document.getElementById("run-btn");
+  const statusPanel = document.getElementById("status-panel");
+  const errorPanel = document.getElementById("error-panel");
+  const resultsPanel = document.getElementById("results-panel");
+  const scrubFill = document.getElementById("scrub-fill");
+  const statusMessage = document.getElementById("status-message");
+  const statusPct = document.getElementById("status-pct");
+  const clipGrid = document.getElementById("clip-grid");
+  const errorMessage = document.getElementById("error-message");
+
+  // Wire up range sliders to their live value labels.
+  function bindRange(id) {
+    const input = document.getElementById(id);
+    const out = document.getElementById(id + "_val");
+    input.addEventListener("input", () => (out.textContent = input.value));
+  }
+  ["num_clips", "min_len", "max_len"].forEach(bindRange);
+
+  function setStage(activeStage) {
+    const activeIdx = STAGE_ORDER.indexOf(activeStage);
+    document.querySelectorAll(".stage").forEach((el) => {
+      const idx = STAGE_ORDER.indexOf(el.dataset.stage);
+      el.classList.remove("active", "done");
+      if (idx < activeIdx) el.classList.add("done");
+      else if (idx === activeIdx) el.classList.add("active");
+    });
+  }
+
+  function resetUI() {
+    errorPanel.style.display = "none";
+    resultsPanel.style.display = "none";
+    clipGrid.innerHTML = "";
+    statusPanel.style.display = "block";
+    scrubFill.style.width = "0%";
+    statusMessage.textContent = "Queued…";
+    statusPct.textContent = "0%";
+    setStage("download");
+  }
+
+  async function pollJob(jobId) {
+    try {
+      const res = await fetch(`/api/jobs/${jobId}`);
+      if (!res.ok) throw new Error("Lost track of this job.");
+      const job = await res.json();
+
+      if (job.stage && STAGE_ORDER.includes(job.stage)) setStage(job.stage);
+      if (typeof job.progress === "number") {
+        scrubFill.style.width = job.progress + "%";
+        statusPct.textContent = Math.round(job.progress) + "%";
+      }
+      if (job.message) statusMessage.textContent = job.message;
+
+      if (job.status === "done") {
+        setStage("cut");
+        document.querySelectorAll(".stage").forEach((el) => el.classList.add("done"));
+        renderResults(jobId, job.clips || []);
+        runBtn.disabled = false;
+        runBtn.textContent = "Roll clips ▶";
+        return;
+      }
+      if (job.status === "error") {
+        statusPanel.style.display = "none";
+        errorPanel.style.display = "block";
+        errorMessage.textContent = job.error || "Unknown error.";
+        runBtn.disabled = false;
+        runBtn.textContent = "Roll clips ▶";
+        return;
+      }
+      setTimeout(() => pollJob(jobId), 1500);
+    } catch (err) {
+      statusPanel.style.display = "none";
+      errorPanel.style.display = "block";
+      errorMessage.textContent = err.message || String(err);
+      runBtn.disabled = false;
+      runBtn.textContent = "Roll clips ▶";
+    }
+  }
+
+  function renderResults(jobId, clips) {
+    statusPanel.style.display = "none";
+    resultsPanel.style.display = "block";
+    clipGrid.innerHTML = "";
+    clips.forEach((clip) => {
+      const card = document.createElement("div");
+      card.className = "clip-card";
+      const src = `/api/clips/${jobId}/${encodeURIComponent(clip.filename)}`;
+      card.innerHTML = `
+        <video src="${src}" controls preload="metadata"></video>
+        <div class="clip-body">
+          <div class="clip-title">${escapeHtml(clip.title)}</div>
+          <div class="clip-meta">${clip.start.toFixed(1)}s → ${clip.end.toFixed(1)}s · ${clip.duration}s</div>
+          <div class="clip-hook">“${escapeHtml(clip.hook)}”</div>
+          <div class="clip-reason">${escapeHtml(clip.reason)}</div>
+          <a class="dl-btn" href="${src}" download="${escapeHtml(clip.filename)}">Download</a>
+        </div>
+      `;
+      clipGrid.appendChild(card);
+    });
+  }
+
+  function escapeHtml(str) {
+    const div = document.createElement("div");
+    div.textContent = str ?? "";
+    return div.innerHTML;
+  }
+
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    runBtn.disabled = true;
+    runBtn.textContent = "Rolling…";
+    resetUI();
+
+    const payload = {
+      url: document.getElementById("url").value.trim(),
+      num_clips: parseInt(document.getElementById("num_clips").value, 10),
+      min_len: parseFloat(document.getElementById("min_len").value),
+      max_len: parseFloat(document.getElementById("max_len").value),
+      vertical: document.getElementById("vertical").checked,
+      captions: document.getElementById("captions").checked,
+      whisper_model: document.getElementById("whisper_model").value,
+    };
+
+    try {
+      const res = await fetch("/api/jobs", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.detail || "Could not start the job.");
+      pollJob(data.job_id);
+    } catch (err) {
+      statusPanel.style.display = "none";
+      errorPanel.style.display = "block";
+      errorMessage.textContent = err.message || String(err);
+      runBtn.disabled = false;
+      runBtn.textContent = "Roll clips ▶";
+    }
+  });
+</script>
+</body>
+</html>
